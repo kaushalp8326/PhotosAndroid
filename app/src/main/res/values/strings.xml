@@ -2,5 +2,5 @@
     <string name="app_name">AndroidPhotos10</string>
     <string name="album_name_label">Album Name</string>
     <string name="add_photo_button">Add Photo</string>
-    <string name="view_slideshow_button">View Slideshow</string>
+    <string name="view_slideshow_button">View as Slideshow</string>
 </resources>
