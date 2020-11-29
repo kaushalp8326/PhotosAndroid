@@ -46,6 +46,7 @@ public class Photos extends AppCompatActivity {
         lstAlbums = findViewById(R.id.lstAlbums);
         adapter = new ArrayAdapter<>(this, R.layout.listview_entry, user.getAlbums());
         lstAlbums.setAdapter(adapter);
+        lstAlbums.setOnItemClickListener(((parent, view, position, id) -> albumClicked(position)));
 
         cmdCreate = findViewById(R.id.cmdCreate);
         cmdCreate.setOnClickListener((view) -> getAlbumName());
@@ -55,24 +56,60 @@ public class Photos extends AppCompatActivity {
     }
 
     /**
+     * Give the user the option to open or delete an album after clicking on it.
+     */
+    protected void albumClicked(int index) {
+        // This dialog design can definitely be improved
+        Album target = user.getAlbums().get(index);
+        AlertDialog.Builder builder = new AlertDialog.Builder(Photos.this);
+        builder.setTitle(target.getName())
+                .setItems(R.array.album_options_array, (dlg, i) -> {
+                    if(i == 0){ // Open
+                        openAlbum(target);
+                    }else{ // Delete
+                        deleteAlbum(target);
+                    }
+                });
+        builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
+        builder.show();
+    }
+
+    /**
+     * Transitions to the album viewer activity.
+     * @param a Album
+     */
+    protected void openAlbum(Album a) {
+        // TODO
+    }
+
+    /**
+     * Deletes an album.
+     * @param a Album
+     */
+    protected void deleteAlbum(Album a) {
+        user.deleteAlbum(a);
+        adapter.notifyDataSetChanged();
+    }
+
+    /**
      * Helper method to get an album name before creating it. This is needed
      * because Android has no blocking I/O.
      */
     protected void getAlbumName() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(Photos.this);
-        dialog.setTitle("Create New Album");
-        dialog.setMessage("Enter a new album name:");
+        AlertDialog.Builder builder = new AlertDialog.Builder(Photos.this);
+        builder.setTitle("Create New Album")
+                .setMessage("Enter a new album name:");
 
         final EditText input = new EditText(Photos.this);
-        dialog.setView(input);
+        builder.setView(input);
 
-        dialog.setPositiveButton("OK", (dlg, i) -> {
+        builder.setPositiveButton("OK", (dlg, i) -> {
             albumName = input.getText().toString();
             createAlbum();
         });
-        dialog.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
+        builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
         albumName = null;
-        dialog.show();
+        builder.show();
     }
 
     /**
