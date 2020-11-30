@@ -97,9 +97,8 @@ public class User implements Serializable {
     /**
      * Create a new user by name.
      * @param name Username
-     * @throws IOException if there is a problem creating the save file.
      */
-    public User(String name) throws IllegalArgumentException, IOException {
+    public User(String name) {
         this.name = name;
         this.path = context.getFilesDir() + "/" + name + ".dat";
         System.out.println(path);
@@ -110,18 +109,21 @@ public class User implements Serializable {
             f.createNewFile();
             save();
         }catch(IOException e) {
-            throw new IOException();
+            e.printStackTrace();
         }
     }
 
     /**
      * Save this user's data to the filesystem via serialization.
-     * @throws IOException if user save file is missing.
      */
-    public void save() throws IOException {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
-        oos.writeObject(this);
-        oos.close();
+    public void save() {
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
+            oos.writeObject(this);
+            oos.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
     /**

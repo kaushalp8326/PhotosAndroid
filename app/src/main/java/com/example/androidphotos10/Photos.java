@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 public class Photos extends AppCompatActivity {
 
@@ -26,6 +27,11 @@ public class Photos extends AppCompatActivity {
     // Input dialog response
     private String albumName;
 
+    // Album option flags
+    private final int OPEN = 0;
+    private final int RENAME = 1;
+    private final int DELETE = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,11 +41,7 @@ public class Photos extends AppCompatActivity {
         User.setContext(Photos.this);
         user = User.load("sesh");
         if(user == null){
-            try {
-                user = new User("sesh");
-            }catch(IOException e){
-                e.printStackTrace();
-            }
+            user = new User("sesh");
         }
 
         // Set listeners
@@ -49,7 +51,7 @@ public class Photos extends AppCompatActivity {
         lstAlbums.setOnItemClickListener(((parent, view, position, id) -> albumClicked(position)));
 
         cmdCreate = findViewById(R.id.cmdCreate);
-        cmdCreate.setOnClickListener((view) -> getAlbumName());
+        cmdCreate.setOnClickListener((view) -> getCreatedAlbumName());
         cmdFind = findViewById(R.id.cmdFind);
         cmdFind.setOnClickListener((view) -> findPhotos());
 
@@ -64,10 +66,18 @@ public class Photos extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(Photos.this);
         builder.setTitle(target.getName())
                 .setItems(R.array.album_options_array, (dlg, i) -> {
-                    if(i == 0){ // Open
-                        openAlbum(target);
-                    }else{ // Delete
-                        deleteAlbum(target);
+                    switch(i){
+                        case OPEN:
+                            openAlbum(target);
+                            break;
+
+                        case RENAME:
+                            getReplacementAlbumName(target);
+                            break;
+
+                        case DELETE:
+                            deleteAlbum(target);
+                            break;
                     }
                 });
         builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
@@ -83,11 +93,46 @@ public class Photos extends AppCompatActivity {
     }
 
     /**
+     * Helper method to get a replacement album name before renaming it. This is needed
+     * because Android has no blocking I/O.
+     */
+    protected void getReplacementAlbumName(Album a) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(Photos.this);
+        builder.setTitle("Rename Album")
+                .setMessage("Enter a new album name:");
+
+        final EditText input = new EditText(Photos.this);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", (dlg, i) -> {
+            albumName = input.getText().toString();
+            renameAlbum(a);
+        });
+        builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
+        albumName = null;
+        builder.show();
+    }
+
+    /**
+     * Renames an album, if the name isn't a duplicate.
+     * @param a Album
+     */
+    protected void renameAlbum(Album a) {
+        if(a.setName(albumName)){
+            user.save();
+           adapter.notifyDataSetChanged();
+        }else{
+            Toast.makeText(this, "An album with this name already exists", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
      * Deletes an album.
      * @param a Album
      */
     protected void deleteAlbum(Album a) {
         user.deleteAlbum(a);
+        user.save();
         adapter.notifyDataSetChanged();
     }
 
@@ -95,7 +140,7 @@ public class Photos extends AppCompatActivity {
      * Helper method to get an album name before creating it. This is needed
      * because Android has no blocking I/O.
      */
-    protected void getAlbumName() {
+    protected void getCreatedAlbumName() {
         AlertDialog.Builder builder = new AlertDialog.Builder(Photos.this);
         builder.setTitle("Create New Album")
                 .setMessage("Enter a new album name:");
@@ -121,6 +166,7 @@ public class Photos extends AppCompatActivity {
         }
         try {
             user.createAlbum(albumName);
+            user.save();
             adapter.notifyDataSetChanged();
         }catch(IllegalArgumentException e){
             Toast.makeText(this, "An album with this name already exists", Toast.LENGTH_LONG).show();

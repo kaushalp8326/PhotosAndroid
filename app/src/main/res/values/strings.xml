@@ -5,6 +5,7 @@
     <string name="view_slideshow_button">View Slideshow</string>
     <string-array name="album_options_array">
         <item>Open</item>
+        <item>Rename</item>
         <item>Delete</item>
     </string-array>
 </resources>
