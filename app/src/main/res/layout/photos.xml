@@ -18,13 +18,13 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_weight="1"
-        android:text="Create Album" />
+        android:text="@string/create_album_button" />
 
     <Button
         android:id="@+id/cmdFind"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_weight="1"
-        android:text="Find Photos" />
+        android:text="@string/find_photos_button" />
 
 </LinearLayout>

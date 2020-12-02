@@ -4,15 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.androidphotos10.model.*;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import java.io.IOException;
-import java.util.function.Consumer;
 
 public class Photos extends AppCompatActivity {
 
@@ -32,6 +30,10 @@ public class Photos extends AppCompatActivity {
     private final int RENAME = 1;
     private final int DELETE = 2;
 
+    // Bundle constants
+    public static final String USER = "user";
+    public static final String ALBUM = "album";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +48,7 @@ public class Photos extends AppCompatActivity {
 
         // Set listeners
         lstAlbums = findViewById(R.id.lstAlbums);
-        adapter = new ArrayAdapter<>(this, R.layout.listview_entry, user.getAlbums());
+        adapter = new ArrayAdapter<>(this, R.layout.text_entry, user.getAlbums());
         lstAlbums.setAdapter(adapter);
         lstAlbums.setOnItemClickListener(((parent, view, position, id) -> albumClicked(position)));
 
@@ -89,7 +91,12 @@ public class Photos extends AppCompatActivity {
      * @param a Album
      */
     protected void openAlbum(Album a) {
-        // TODO
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(USER, user);
+        bundle.putSerializable(ALBUM, a);
+        Intent intent = new Intent(this, AlbumView.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     /**

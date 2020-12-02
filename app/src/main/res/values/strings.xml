@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">AndroidPhotos10</string>
+    <string name="app_name">Photo Viewer</string>
+    <string name="create_album_button">Create Album</string>
+    <string name="find_photos_button">Find Photos</string>
     <string name="album_name_label">Album Name</string>
     <string name="add_photo_button">Add Photo</string>
     <string name="view_slideshow_button">View Slideshow</string>
