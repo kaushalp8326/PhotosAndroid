@@ -1,15 +1,12 @@
 package com.example.androidphotos10.model;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import android.net.Uri;
+
 import java.io.Serializable;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TimeZone;
 
 /**
  * Class that stores a picture and its relevant data.
@@ -21,9 +18,7 @@ public class Picture implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String path;
-
-    //private transient Image image;
+    private final Uri uri;
 
     public String caption;
 
@@ -32,49 +27,20 @@ public class Picture implements Serializable {
      */
     private HashMap<String, ArrayList<String>> tags=new HashMap<String, ArrayList<String>>();
 
-    private LocalDateTime timestamp;
-
     /**
      * Picture constructor. Loads the image from the file system given a path.
-     * @param path The picture's filepath.
-     * @throws FileNotFoundException if the given filepath doesn't exist.
+     * @param uri The picture's URI representation.
      */
-    public Picture(String path) throws FileNotFoundException {
-        this.path = path;
-        long time = new File(path).lastModified(); // possible FNFE here
-        this.timestamp = LocalDateTime.ofInstant(Instant.ofEpochMilli(time), TimeZone.getDefault().toZoneId());
+    public Picture(Uri uri) {
+        this.uri = uri;
     }
 
     /**
-     * Fetch this picture's path.
-     * @return The path as a string.
+     * Fetch this picture's URI.
+     * @return URI object.
      */
-    public String getPath() {
-        return path;
-    }
-
-    /**
-     * Fetch this picture's {@code Image} representation. Since {@code Image} isn't serializable, the {@code Image} gets
-     * loaded from the file system when it's first accessed, but is stored inside the class until the end of the session.
-     * @return This picture's {@code Image}.
-     */
-    /*public Image getImage() {
-        if(image == null) {
-            try {
-                this.image = new Image(new FileInputStream(path));
-            }catch(FileNotFoundException e) {
-                e.printStackTrace(); // should not occur, since you can't have a picture with an invalid path
-            }
-        }
-        return image;
-    }*/
-
-    /**
-     * Fetch this picture's timestamp.
-     * @return Timestamp as a {@code LocalDateTime} object.
-     */
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public Uri getUri() {
+        return uri;
     }
 
     /**
@@ -149,6 +115,11 @@ public class Picture implements Serializable {
         }else {
             tags.get(tag).remove(value);
         }
+    }
+
+    @Override
+    public String toString(){
+        return uri.toString();
     }
 
 }

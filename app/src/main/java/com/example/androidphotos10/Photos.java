@@ -18,9 +18,9 @@ public class Photos extends AppCompatActivity {
     public User user;
 
     // Widgets
-    ListView lstAlbums;
-    ArrayAdapter<Album> adapter;
-    Button cmdCreate, cmdFind;
+    private ListView lstAlbums;
+    private ArrayAdapter<Album> adapter;
+    private Button cmdCreate, cmdFind;
 
     // Input dialog response
     private String albumName;
