@@ -3,6 +3,7 @@ package com.example.androidphotos10;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ public class AlbumView extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //AlbumView.setSelectedIndex(lstAlbums.getSelectedItemPosition());
                 setSelectedIndex(i);
+                photoClicked(i);
             }
         });
 
@@ -72,6 +74,10 @@ public class AlbumView extends AppCompatActivity {
 
     public static void setSelectedIndex(int index){
         selectedIndex=index;
+    }
+
+    protected void photoClicked(int index){
+        Picture picture = album.getPictures().get(index);
     }
 
     protected void addPhoto() {
@@ -98,11 +104,17 @@ public class AlbumView extends AppCompatActivity {
         // TODO null checking doesn't work
         // lstAlbums.getItemAtPosition(AlbumView.getSelectedIndex()) != null
         // lstAlbums.getSelectedItem() != null
-        if(lstAlbums.getItemAtPosition(AlbumView.getSelectedIndex()) != null) {
+        if(album.getPictures().size() != 0) {
             album.removePicture((Picture) lstAlbums.getItemAtPosition(getSelectedIndex()));
             setSelectedIndex(0);
             user.save();
             adapter.notifyDataSetChanged();
+        }else{
+            new AlertDialog.Builder(AlbumView.this)
+                    .setTitle("Remove Photo")
+                    .setMessage("There are no photos in this album to remove")
+                    .setNegativeButton("OK", (dlg, i) -> dlg.cancel())
+                    .show();
         }
     }
 }
