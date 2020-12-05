@@ -9,6 +9,8 @@
 
     <ListView
         android:id="@+id/lstAlbums"
+        android:choiceMode="singleChoice"
+        android:listSelector="@color/teal_200"
         android:layout_width="match_parent"
         android:layout_height="500dp"
         android:layout_weight="1" />
@@ -19,6 +21,13 @@
         android:layout_height="150dp"
         android:layout_weight="1"
         android:text="@string/add_photo_button" />
+
+    <Button
+        android:id="@+id/cmdRemovePhoto"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_weight="1"
+        android:text="@string/remove_photo_button" />
 
     <Button
         android:id="@+id/cmdSlideshow"
