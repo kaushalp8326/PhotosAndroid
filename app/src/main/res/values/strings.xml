@@ -16,4 +16,8 @@
         <item>Remove Tag</item>
         <item>Move to Another Album</item>
     </string-array>
+    <string-array name="tag_types_array">
+        <item>Person</item>
+        <item>Location</item>
+    </string-array>
 </resources>

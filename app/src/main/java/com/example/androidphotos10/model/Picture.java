@@ -22,6 +22,9 @@ public class Picture implements Serializable {
 
     public String caption;
 
+    private final String PERSON = "Person";
+    private final String LOCATION = "Location";
+
     /**
      * Tags for a Picture.
      */

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.androidphotos10.model.*;
@@ -26,12 +27,20 @@ public class AlbumView extends AppCompatActivity {
     private Button cmdRemovePhoto;
     private Button cmdSlideshow;
 
+    private final String PERSON = "Person";
+    private final String LOCATION = "Location";
+
     private static int selectedIndex=0;
 
     private final int ADD_PHOTO = 0;
     private final int ADD_TAG = 0;
     private final int REMOVE_TAG = 1;
     private final int MOVE_PHOTO = 2;
+    private final int PERSON_TAG = 0;
+    private final int LOCATION_TAG = 1;
+
+    // Input dialog response
+    private String newTagValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +65,6 @@ public class AlbumView extends AppCompatActivity {
                 photoClicked(i);
             }
         });
-
-        // TODO
-        // lstAlbums.setOnItemClickListener();
 
         cmdAddPhoto = findViewById(R.id.cmdAddPhoto);
         cmdAddPhoto.setOnClickListener((view) -> addPhoto());
@@ -85,11 +91,11 @@ public class AlbumView extends AppCompatActivity {
                 .setItems(R.array.photo_options_array, (dlg, i) -> {
                     switch (i){
                         case ADD_TAG:
-                            //TODO
+                            addTag(picture);
                             break;
 
                         case REMOVE_TAG:
-                            //TODO
+                            addTag(picture);
                             break;
 
                         case MOVE_PHOTO:
@@ -99,6 +105,58 @@ public class AlbumView extends AppCompatActivity {
                 })
                 .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel())
                 .show();
+    }
+
+    protected void addTag(Picture picture){
+        final EditText tagInput = new EditText(AlbumView.this);
+        new AlertDialog.Builder(AlbumView.this)
+                .setItems(R.array.tag_types_array, (dlg, i) -> {
+                    switch (i){
+                        case PERSON_TAG:
+                            addPersonTag(picture);
+                            break;
+
+                        case LOCATION_TAG:
+                            addLocationTag(picture);
+                            break;
+                    }
+                })
+                .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel())
+                .show();
+    }
+
+    protected void addPersonTag(Picture picture){
+        final EditText tagInput = new EditText(AlbumView.this);
+        new AlertDialog.Builder(AlbumView.this)
+                .setTitle("Add Person Tag")
+                .setMessage("Enter a new name:")
+                .setView(tagInput)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        newTagValue=tagInput.getText().toString();
+                    }
+                })
+                .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel())
+                .show();
+        picture.addTag(PERSON, newTagValue);
+    }
+
+    protected void addLocationTag(Picture picture){
+        final EditText tagInput = new EditText(AlbumView.this);
+        new AlertDialog.Builder(AlbumView.this)
+                .setTitle("Add Location Tag")
+                .setMessage("Enter a new location:")
+                .setView(tagInput)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        newTagValue=tagInput.getText().toString();
+                    }
+                })
+                .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel())
+                .show();
+        picture.addTag(LOCATION, newTagValue);
     }
 
     protected void addPhoto() {
