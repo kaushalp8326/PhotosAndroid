@@ -29,6 +29,9 @@ public class AlbumView extends AppCompatActivity {
     private static int selectedIndex=0;
 
     private final int ADD_PHOTO = 0;
+    private final int ADD_TAG = 0;
+    private final int REMOVE_TAG = 1;
+    private final int MOVE_PHOTO = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +81,24 @@ public class AlbumView extends AppCompatActivity {
 
     protected void photoClicked(int index){
         Picture picture = album.getPictures().get(index);
+        new AlertDialog.Builder(AlbumView.this)
+                .setItems(R.array.photo_options_array, (dlg, i) -> {
+                    switch (i){
+                        case ADD_TAG:
+                            //TODO
+                            break;
+
+                        case REMOVE_TAG:
+                            //TODO
+                            break;
+
+                        case MOVE_PHOTO:
+                            //TODO
+                            break;
+                    }
+                })
+                .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel())
+                .show();
     }
 
     protected void addPhoto() {
@@ -101,7 +122,6 @@ public class AlbumView extends AppCompatActivity {
     }
 
     protected void removePhoto(){
-        // TODO null checking doesn't work
         // lstAlbums.getItemAtPosition(AlbumView.getSelectedIndex()) != null
         // lstAlbums.getSelectedItem() != null
         if(album.getPictures().size() != 0) {

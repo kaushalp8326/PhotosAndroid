@@ -11,4 +11,9 @@
         <item>Rename</item>
         <item>Delete</item>
     </string-array>
+    <string-array name="photo_options_array">
+        <item>Add Tag</item>
+        <item>Remove Tag</item>
+        <item>Move to Another Album</item>
+    </string-array>
 </resources>
