@@ -64,6 +64,28 @@ public class Picture implements Serializable {
         return tagPairs;
     }
 
+    public String[] getTagArray(){
+        Set<Entry<String, ArrayList<String>>> setOfTags = tags.entrySet();
+        int size=0;
+        for(Entry<String, ArrayList<String>> entry : setOfTags){
+            for(int i=0; i<entry.getValue().size(); i++) {
+                size++;
+            }
+        }
+        String[] tagPairs=new String[size];
+        if(tags == null || tags.size()==0) {
+            return tagPairs;
+        }
+        int index=0;
+        for(Entry<String, ArrayList<String>> entry : setOfTags){
+            for(int i=0; i<entry.getValue().size(); i++) {
+                tagPairs[index+i]=(entry.getKey()+":\n"+entry.getValue().get(i));
+            }
+            index+=entry.getValue().size();
+        }
+        return tagPairs;
+    }
+
     /**
      * Pretty print method for tags. Used when printing tags for a picture in a slide show.
      * @return String used to print all the tags for a picture.

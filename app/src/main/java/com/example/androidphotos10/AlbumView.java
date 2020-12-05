@@ -15,6 +15,8 @@ import android.widget.ListView;
 
 import com.example.androidphotos10.model.*;
 
+import java.util.ArrayList;
+
 public class AlbumView extends AppCompatActivity {
     // Sesh
     public User user;
@@ -38,9 +40,6 @@ public class AlbumView extends AppCompatActivity {
     private final int MOVE_PHOTO = 2;
     private final int PERSON_TAG = 0;
     private final int LOCATION_TAG = 1;
-
-    // Input dialog response
-    private String newTagValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +94,7 @@ public class AlbumView extends AppCompatActivity {
                             break;
 
                         case REMOVE_TAG:
-                            addTag(picture);
+                            removeTag(picture);
                             break;
 
                         case MOVE_PHOTO:
@@ -108,7 +107,6 @@ public class AlbumView extends AppCompatActivity {
     }
 
     protected void addTag(Picture picture){
-        final EditText tagInput = new EditText(AlbumView.this);
         new AlertDialog.Builder(AlbumView.this)
                 .setItems(R.array.tag_types_array, (dlg, i) -> {
                     switch (i){
@@ -134,12 +132,14 @@ public class AlbumView extends AppCompatActivity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        newTagValue=tagInput.getText().toString();
+                        String temp=tagInput.getText().toString();
+                        if(!temp.equalsIgnoreCase("")){
+                            picture.addTag(PERSON, temp);
+                        }
                     }
                 })
                 .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel())
                 .show();
-        picture.addTag(PERSON, newTagValue);
     }
 
     protected void addLocationTag(Picture picture){
@@ -151,12 +151,32 @@ public class AlbumView extends AppCompatActivity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        newTagValue=tagInput.getText().toString();
+                        String temp=tagInput.getText().toString();
+                        if(!temp.equalsIgnoreCase("")){
+                            picture.addTag(LOCATION, temp);
+                        }
                     }
                 })
                 .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel())
                 .show();
-        picture.addTag(LOCATION, newTagValue);
+    }
+
+    protected void removeTag(Picture picture){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder
+                .setTitle("Remove Tag")
+                .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
+        builder.setItems(picture.getTagArray(), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String tag=picture.getTagArray()[i];
+                String tagType=tag.substring(0,tag.indexOf(":"));
+                String tagValue=tag.substring(tag.indexOf("\n")+1);
+                picture.removeTag(tagType, tagValue);
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     protected void addPhoto() {
