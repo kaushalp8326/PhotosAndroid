@@ -149,7 +149,7 @@ public class Picture implements Serializable {
 
     @Override
     public String toString(){
-        return uri.toString();
+        return path;
     }
 
 }
