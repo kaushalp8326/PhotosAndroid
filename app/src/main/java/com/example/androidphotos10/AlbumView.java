@@ -182,6 +182,14 @@ public class AlbumView extends AppCompatActivity {
     }
 
     protected void removeTag(Picture picture){
+        if(picture.getTags().size()==0){
+            new AlertDialog.Builder(AlbumView.this)
+                    .setTitle("Remove Tag")
+                    .setMessage("There are no tags for this photo to remove.")
+                    .setNegativeButton("OK", (dlg, i) -> dlg.cancel())
+                    .show();
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder
                 .setTitle("Remove Tag")
