@@ -76,6 +76,16 @@ public class AlbumView extends AppCompatActivity {
         // cmdSlideshow.setOnClickListener();
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Photos.ALBUM, album);
+        intent.putExtras(bundle);
+        setResult(Photos.ALBUM_DATA, intent);
+        finish();
+    }
+
     public static int getSelectedIndex(){
         return selectedIndex;
     }

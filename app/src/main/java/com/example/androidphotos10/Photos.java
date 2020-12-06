@@ -26,9 +26,13 @@ public class Photos extends AppCompatActivity {
     private String albumName;
 
     // Album option flags
-    private final int OPEN = 0;
-    private final int RENAME = 1;
-    private final int DELETE = 2;
+    private static final int OPEN = 0;
+    private static final int RENAME = 1;
+    private static final int DELETE = 2;
+
+    // Activity return data
+    public static final int ALBUM_DATA = 0;
+    private int selectedIndex = 0;
 
     // Bundle constants
     public static final String USER = "user";
@@ -60,10 +64,29 @@ public class Photos extends AppCompatActivity {
     }
 
     /**
+     * Update the previously opened album with the user's changes made in the album view activity.
+     * @param requestCode Request code
+     * @param resultCode Result data
+     * @param data Intent containing data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == ALBUM_DATA) {
+            Album updated = (Album)data.getExtras().getSerializable(ALBUM);
+            user.getAlbums().set(selectedIndex, updated);
+            user.save();
+        }
+
+    }
+
+
+    /**
      * Give the user the option to open or delete an album after clicking on it.
      */
     protected void albumClicked(int index) {
         // This dialog design can definitely be improved
+        selectedIndex = index;
         Album target = user.getAlbums().get(index);
         AlertDialog.Builder builder = new AlertDialog.Builder(Photos.this);
         builder.setTitle(target.getName())
@@ -96,7 +119,7 @@ public class Photos extends AppCompatActivity {
         bundle.putSerializable(ALBUM, a);
         Intent intent = new Intent(this, AlbumView.class);
         intent.putExtras(bundle);
-        startActivity(intent);
+        startActivityForResult(intent, ALBUM_DATA);
     }
 
     /**

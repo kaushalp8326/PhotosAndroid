@@ -18,7 +18,8 @@ public class Picture implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final Uri uri;
+    private transient Uri uri;
+    private String path;
 
     public String caption;
 
@@ -36,6 +37,7 @@ public class Picture implements Serializable {
      */
     public Picture(Uri uri) {
         this.uri = uri;
+        this.path = uri.toString();
     }
 
     /**
@@ -43,6 +45,9 @@ public class Picture implements Serializable {
      * @return URI object.
      */
     public Uri getUri() {
+        if(uri == null){
+            uri = Uri.parse(path);
+        }
         return uri;
     }
 
