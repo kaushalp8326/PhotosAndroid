@@ -10,10 +10,14 @@
 
     <ImageView
         android:id="@+id/displayPicture"
-        tools:ignore="ContentDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_launcher_background" />
+
+    <TextView
+        android:id="@+id/tagDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/cmdLeft"

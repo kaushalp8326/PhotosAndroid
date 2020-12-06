@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.androidphotos10.model.Album;
 import com.example.androidphotos10.model.User;
@@ -15,6 +16,7 @@ public class Slideshow extends AppCompatActivity {
 
     private Button cmdLeft;
     private Button cmdRight;
+    private TextView tagDescription;
 
     private static int selectedIndex;
     private static ImageView displayed;
@@ -32,6 +34,9 @@ public class Slideshow extends AppCompatActivity {
 
         displayed = findViewById(R.id.displayPicture);
         displayed.setImageURI(album.getPictures().get(0).getUri());
+
+        tagDescription = findViewById(R.id.tagDescription);
+        tagDescription.setText(album.getPictures().get(0).printTags());
 
         cmdLeft = findViewById(R.id.cmdLeft);
         cmdLeft.setOnClickListener((view) -> left());
@@ -52,6 +57,7 @@ public class Slideshow extends AppCompatActivity {
         if (selectedIndex>0){
             selectedIndex--;
             displayed.setImageURI(album.getPictures().get(selectedIndex).getUri());
+            tagDescription.setText(album.getPictures().get(selectedIndex).printTags());
         }
     }
 
@@ -59,6 +65,7 @@ public class Slideshow extends AppCompatActivity {
         if (selectedIndex<album.getSize()-1){
             selectedIndex++;
             displayed.setImageURI(album.getPictures().get(selectedIndex).getUri());
+            tagDescription.setText(album.getPictures().get(selectedIndex).printTags());
         }
     }
 }

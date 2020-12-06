@@ -231,18 +231,26 @@ public class AlbumView extends AppCompatActivity {
         }else{
             new AlertDialog.Builder(AlbumView.this)
                     .setTitle("Remove Photo")
-                    .setMessage("There are no photos in this album to remove")
+                    .setMessage("There are no photos in this album to remove.")
                     .setNegativeButton("OK", (dlg, i) -> dlg.cancel())
                     .show();
         }
     }
 
     protected void startSlideshow(Album a){
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(Photos.USER, user);
-        bundle.putSerializable(Photos.ALBUM, a);
-        Intent intent = new Intent(this, Slideshow.class);
-        intent.putExtras(bundle);
-        startActivity(intent);
+        if (album.getPictures().size()==0){
+            new AlertDialog.Builder(AlbumView.this)
+                    .setTitle("Slideshow")
+                    .setMessage("There are no photos in this album to display.")
+                    .setNegativeButton("OK", (dlg, i) -> dlg.cancel())
+                    .show();
+        }else{
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(Photos.USER, user);
+            bundle.putSerializable(Photos.ALBUM, a);
+            Intent intent = new Intent(this, Slideshow.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
     }
 }
