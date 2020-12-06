@@ -6,6 +6,8 @@
     <string name="add_photo_button">Add Photo</string>
     <string name="remove_photo_button">Remove Photo</string>
     <string name="view_slideshow_button">View Slideshow</string>
+    <string name="left_arrow"><![CDATA[<]]></string>
+    <string name="right_arrow"><![CDATA[>]]></string>
     <string-array name="album_options_array">
         <item>Open</item>
         <item>Rename</item>
@@ -15,6 +17,7 @@
         <item>Add Tag</item>
         <item>Remove Tag</item>
         <item>Move to Another Album</item>
+        <item>Remove Photo</item>
     </string-array>
     <string-array name="tag_types_array">
         <item>Person</item>

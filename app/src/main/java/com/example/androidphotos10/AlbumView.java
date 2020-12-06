@@ -28,7 +28,7 @@ public class AlbumView extends AppCompatActivity {
     private ListView lstAlbums;
     private PhotoAdapter adapter;
     private Button cmdAddPhoto;
-    private Button cmdRemovePhoto;
+    //private Button cmdRemovePhoto;
     private Button cmdSlideshow;
 
     private final String PERSON = "Person";
@@ -40,6 +40,7 @@ public class AlbumView extends AppCompatActivity {
     private final int ADD_TAG = 0;
     private final int REMOVE_TAG = 1;
     private final int MOVE_PHOTO = 2;
+    private final int REMOVE_PHOTO = 3;
     private final int PERSON_TAG = 0;
     private final int LOCATION_TAG = 1;
 
@@ -70,12 +71,12 @@ public class AlbumView extends AppCompatActivity {
         cmdAddPhoto = findViewById(R.id.cmdAddPhoto);
         cmdAddPhoto.setOnClickListener((view) -> addPhoto());
 
-        cmdRemovePhoto = findViewById(R.id.cmdRemovePhoto);
-        cmdRemovePhoto.setOnClickListener((view) -> removePhoto());
+        //cmdRemovePhoto = findViewById(R.id.cmdRemovePhoto);
+        //cmdRemovePhoto.setOnClickListener((view) -> removePhoto());
 
         cmdSlideshow = findViewById(R.id.cmdSlideshow);
         // TODO
-        // cmdSlideshow.setOnClickListener();
+        cmdSlideshow.setOnClickListener((view) -> startSlideshow(album));
     }
 
     @Override
@@ -116,6 +117,9 @@ public class AlbumView extends AppCompatActivity {
                         case MOVE_PHOTO:
                             //TODO
                             break;
+
+                        case REMOVE_PHOTO:
+                            removePhoto();
                     }
                 })
                 .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel())
@@ -231,5 +235,14 @@ public class AlbumView extends AppCompatActivity {
                     .setNegativeButton("OK", (dlg, i) -> dlg.cancel())
                     .show();
         }
+    }
+
+    protected void startSlideshow(Album a){
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Photos.USER, user);
+        bundle.putSerializable(Photos.ALBUM, a);
+        Intent intent = new Intent(this, Slideshow.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }
