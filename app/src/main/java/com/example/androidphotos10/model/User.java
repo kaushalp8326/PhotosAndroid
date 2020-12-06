@@ -10,6 +10,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import android.content.Context;
 
@@ -124,6 +126,24 @@ public class User implements Serializable {
         }catch(IOException e){
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Save data from a particular album. By extension, this saves any other unsaved changes made
+     * to the user since the last save. Works only if the album's name can be found in the list
+     * of existing albums, so this can't be used to save an album name change.
+     * @param data Album object
+     */
+    public void saveAlbumData(Album data) {
+        int target = 0;
+        while(!albums.get(target).getName().equals(data.getName()) && target < albums.size()){
+            target++;
+        }
+        if(target == albums.size()){
+            return;
+        }
+        albums.set(target, data);
+        save();
     }
 
     /**

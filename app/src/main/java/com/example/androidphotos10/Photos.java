@@ -32,7 +32,6 @@ public class Photos extends AppCompatActivity {
 
     // Activity return data
     public static final int ALBUM_DATA = 0;
-    private int selectedIndex = 0;
 
     // Bundle constants
     public static final String USER = "user";
@@ -74,19 +73,15 @@ public class Photos extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == ALBUM_DATA) {
             Album updated = (Album)data.getExtras().getSerializable(ALBUM);
-            user.getAlbums().set(selectedIndex, updated);
-            user.save();
+            user.saveAlbumData(updated);
         }
 
     }
-
 
     /**
      * Give the user the option to open or delete an album after clicking on it.
      */
     protected void albumClicked(int index) {
-        // This dialog design can definitely be improved
-        selectedIndex = index;
         Album target = user.getAlbums().get(index);
         AlertDialog.Builder builder = new AlertDialog.Builder(Photos.this);
         builder.setTitle(target.getName())

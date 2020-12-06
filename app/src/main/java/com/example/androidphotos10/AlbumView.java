@@ -203,7 +203,7 @@ public class AlbumView extends AppCompatActivity {
                 case ADD_PHOTO:
                     Picture toAdd = new Picture(imageReturnedIntent.getData());
                     album.addPicture(toAdd);
-                    user.save();
+                    user.saveAlbumData(album);
                     adapter.notifyDataSetChanged();
             }
         }
@@ -215,7 +215,7 @@ public class AlbumView extends AppCompatActivity {
         if(album.getPictures().size() != 0) {
             album.removePicture((Picture) lstAlbums.getItemAtPosition(getSelectedIndex()));
             setSelectedIndex(0);
-            user.save();
+            user.saveAlbumData(album);
             adapter.notifyDataSetChanged();
         }else{
             new AlertDialog.Builder(AlbumView.this)
