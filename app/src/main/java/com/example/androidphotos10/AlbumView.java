@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.example.androidphotos10.model.*;
@@ -97,7 +98,11 @@ public class AlbumView extends AppCompatActivity {
 
     protected void photoClicked(int index){
         Picture picture = album.getPictures().get(index);
+        ImageView image = new ImageView(this);
+        image.setImageURI(picture.getUri());
+        //image.setContentDescription(picture.printTags());
         new AlertDialog.Builder(AlbumView.this)
+                .setView(image)
                 .setItems(R.array.photo_options_array, (dlg, i) -> {
                     switch (i){
                         case ADD_TAG:
