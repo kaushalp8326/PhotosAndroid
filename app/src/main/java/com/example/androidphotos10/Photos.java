@@ -41,6 +41,7 @@ public class Photos extends AppCompatActivity {
     // Bundle constants
     public static final String USER = "user";
     public static final String ALBUM = "album";
+    public static final String ALBUM_NAME = "album_name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
