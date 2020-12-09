@@ -18,6 +18,7 @@ import android.widget.ListView;
 import com.example.androidphotos10.model.*;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class AlbumView extends AppCompatActivity {
     // Sesh
@@ -43,8 +44,6 @@ public class AlbumView extends AppCompatActivity {
     private final int REMOVE_PHOTO = 3;
     private final int PERSON_TAG = 0;
     private final int LOCATION_TAG = 1;
-
-    public static final int DESTINATION_ALBUM = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +103,6 @@ public class AlbumView extends AppCompatActivity {
         Picture picture = album.getPictures().get(index);
         ImageView image = new ImageView(this);
         image.setImageURI(picture.getUri());
-        //image.setContentDescription(picture.printTags());
         new AlertDialog.Builder(AlbumView.this)
                 .setView(image)
                 .setItems(R.array.photo_options_array, (dlg, i) -> {
@@ -211,7 +209,7 @@ public class AlbumView extends AppCompatActivity {
     }
 
     /**
-     * Opens the activity for moving a photo to another album.
+     * Opens the dialog for moving a photo to another album.
      */
     protected void movePhoto() {
         if(user.getAlbums().size() < 2){
@@ -222,14 +220,37 @@ public class AlbumView extends AppCompatActivity {
                     .show();
             return;
         }
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(Photos.USER, user);
-        bundle.putSerializable(Photos.ALBUM, album);
-        Intent intent = new Intent(this, ChooseAlbum.class);
-        intent.putExtras(bundle);
-        startActivityForResult(intent, DESTINATION_ALBUM);
+        AlertDialog.Builder builder = new AlertDialog.Builder(AlbumView.this);
+        String[] albumList = user.getAlbums().stream()
+                .filter(a -> !a.getName().equals(album.getName()))
+                .map(Album::getName)
+                .toArray(String[]::new);
+        builder.setTitle("Move Photo")
+                .setItems(albumList,
+                        (dlg, i) -> {
+                            for(Album a : user.getAlbums()){
+                                if(a.getName().equals(albumList[i])){
+                                    executeMove(a);
+                                    break;
+                                }
+                            }
+                        });
+        builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
+        builder.show();
+
     }
 
+    /**
+     * Moves a photo to the chosen album.
+     */
+    protected void executeMove(Album target) {
+        Picture targetPic = album.getPictures().get(selectedIndex);
+        album.removePicture(targetPic);
+        target.addPicture(targetPic);
+        user.saveAlbumData(album);
+        user.saveAlbumData(target);
+        adapter.notifyDataSetChanged();
+    }
 
     protected void addPhoto() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -249,24 +270,6 @@ public class AlbumView extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
                     break;
 
-                case DESTINATION_ALBUM:
-                    String name = intent.getExtras().getString(Photos.ALBUM_NAME);
-                    if(name == null){
-                        return;
-                    }
-                    Album targetAlbum = null;
-                    for(Album a : user.getAlbums()){
-                        if(a.getName().equals(name)){
-                            targetAlbum = a;
-                            break;
-                        }
-                    }
-                    Picture targetPic = album.getPictures().get(selectedIndex);
-                    album.removePicture(targetPic);
-                    targetAlbum.addPicture(targetPic);
-                    user.saveAlbumData(album);
-                    user.saveAlbumData(targetAlbum);
-                    adapter.notifyDataSetChanged();
             }
         }
     }
