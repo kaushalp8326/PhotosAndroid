@@ -240,7 +240,7 @@ public class Photos extends AppCompatActivity {
                         for(Picture pic: allPictures){
                             String[] tags = pic.getTagArray();
                             for(int j=0; j<tags.length; j++){
-                                String s=tags[i];
+                                String s=tags[j];
                                 String value=s.substring(s.indexOf("\n")+1);
                                 if(value.toLowerCase().contains(searchParam.toLowerCase())){
                                     searchPictures.add(pic);
