@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.androidphotos10.model.*;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -11,6 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Photos extends AppCompatActivity {
 
@@ -29,6 +33,7 @@ public class Photos extends AppCompatActivity {
     private static final int OPEN = 0;
     private static final int RENAME = 1;
     private static final int DELETE = 2;
+    private static final int OPEN_SEARCH_RESULTS = 10;
 
     // Activity return data
     public static final int ALBUM_DATA = 0;
@@ -117,6 +122,18 @@ public class Photos extends AppCompatActivity {
         startActivityForResult(intent, ALBUM_DATA);
     }
 
+    protected void openAlbum(Album a, int code) {
+        if(code!=OPEN_SEARCH_RESULTS){
+            return;
+        }
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(USER, user);
+        bundle.putSerializable(ALBUM, a);
+        Intent intent = new Intent(this, SearchView.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
     /**
      * Helper method to get a replacement album name before renaming it. This is needed
      * because Android has no blocking I/O.
@@ -203,6 +220,38 @@ public class Photos extends AppCompatActivity {
      */
     protected void findPhotos() {
         // TODO
+        HashSet<Picture> searchPictures = new HashSet<Picture>();
+        ArrayList<Picture> allPictures=new ArrayList<Picture>();
+        for (int i=0; i<user.getAlbums().size(); i++){
+            Album album = user.getAlbums().get(i);
+            allPictures.addAll(album.getPictures());
+        }
+
+        final EditText tagInput = new EditText(Photos.this);
+        new AlertDialog.Builder(Photos.this)
+                .setTitle("Search By Tag")
+                .setMessage("Enter a tag to search by:")
+                .setView(tagInput)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String searchParam=tagInput.getText().toString();
+                        for(Picture pic: allPictures){
+                            String[] tags = pic.getTagArray();
+                            for(int j=0; j<tags.length; j++){
+                                String s=tags[i];
+                                String value=s.substring(s.indexOf("\n")+1);
+                                if(value.toLowerCase().contains(searchParam.toLowerCase())){
+                                    searchPictures.add(pic);
+                                }
+                            }
+                        }
+                        Album searchResults = new Album("Search Results", searchPictures);
+                        openAlbum(searchResults, OPEN_SEARCH_RESULTS);
+                    }
+                })
+                .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel())
+                .show();
     }
 
 }
