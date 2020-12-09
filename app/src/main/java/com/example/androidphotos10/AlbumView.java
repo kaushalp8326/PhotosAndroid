@@ -44,6 +44,8 @@ public class AlbumView extends AppCompatActivity {
     private final int PERSON_TAG = 0;
     private final int LOCATION_TAG = 1;
 
+    public static final int DESTINATION_ALBUM = 10;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,8 +53,8 @@ public class AlbumView extends AppCompatActivity {
 
         // Retrieve bundle
         Bundle bundle = getIntent().getExtras();
-        user = (User)bundle.getSerializable(Photos.USER);
-        album = (Album)bundle.getSerializable(Photos.ALBUM);
+        user = (User) bundle.getSerializable(Photos.USER);
+        album = (Album) bundle.getSerializable(Photos.ALBUM);
         setTitle(album.getName());
 
         // Set listeners
@@ -83,6 +85,7 @@ public class AlbumView extends AppCompatActivity {
     public void onBackPressed() {
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
+        bundle.putSerializable(Photos.USER, user);
         bundle.putSerializable(Photos.ALBUM, album);
         intent.putExtras(bundle);
         setResult(Photos.ALBUM_DATA, intent);
@@ -115,7 +118,7 @@ public class AlbumView extends AppCompatActivity {
                             break;
 
                         case MOVE_PHOTO:
-                            //TODO
+                            movePhoto();
                             break;
 
                         case REMOVE_PHOTO:
@@ -207,22 +210,62 @@ public class AlbumView extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Opens the activity for moving a photo to another album.
+     */
+    protected void movePhoto() {
+        if(user.getAlbums().size() < 2){
+            new AlertDialog.Builder(AlbumView.this)
+                    .setTitle("Move Photo")
+                    .setMessage("There are no other albums to move this photo into.")
+                    .setNegativeButton("OK", (dlg, i) -> dlg.cancel())
+                    .show();
+            return;
+        }
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Photos.USER, user);
+        bundle.putSerializable(Photos.ALBUM, album);
+        Intent intent = new Intent(this, ChooseAlbum.class);
+        intent.putExtras(bundle);
+        startActivityForResult(intent, DESTINATION_ALBUM);
+    }
+
+
     protected void addPhoto() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-        //Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT,
-                //android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(Intent.createChooser(intent, "Select a Photo"), ADD_PHOTO);
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        System.out.println(resultCode);
         if(resultCode == Activity.RESULT_OK){
             switch(requestCode){
                 case ADD_PHOTO:
-                    Picture toAdd = new Picture(imageReturnedIntent.getData());
+                    Picture toAdd = new Picture(intent.getData());
                     album.addPicture(toAdd);
                     user.saveAlbumData(album);
+                    adapter.notifyDataSetChanged();
+                    break;
+
+                case DESTINATION_ALBUM:
+                    String name = intent.getExtras().getString(Photos.ALBUM_NAME);
+                    if(name == null){
+                        return;
+                    }
+                    Album targetAlbum = null;
+                    for(Album a : user.getAlbums()){
+                        if(a.getName().equals(name)){
+                            targetAlbum = a;
+                            break;
+                        }
+                    }
+                    Picture targetPic = album.getPictures().get(selectedIndex);
+                    album.removePicture(targetPic);
+                    targetAlbum.addPicture(targetPic);
+                    user.saveAlbumData(album);
+                    user.saveAlbumData(targetAlbum);
                     adapter.notifyDataSetChanged();
             }
         }
