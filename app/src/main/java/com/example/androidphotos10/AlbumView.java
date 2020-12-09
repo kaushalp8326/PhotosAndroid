@@ -76,12 +76,13 @@ public class AlbumView extends AppCompatActivity {
         //cmdRemovePhoto.setOnClickListener((view) -> removePhoto());
 
         cmdSlideshow = findViewById(R.id.cmdSlideshow);
-        // TODO
         cmdSlideshow.setOnClickListener((view) -> startSlideshow(album));
     }
 
     @Override
     public void onBackPressed() {
+        user.saveAlbumData(album);
+        adapter.notifyDataSetChanged();
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         bundle.putSerializable(Photos.USER, user);
@@ -142,6 +143,8 @@ public class AlbumView extends AppCompatActivity {
                 })
                 .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel())
                 .show();
+        user.saveAlbumData(album);
+        adapter.notifyDataSetChanged();
     }
 
     protected void addPersonTag(Picture picture){
@@ -161,6 +164,8 @@ public class AlbumView extends AppCompatActivity {
                 })
                 .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel())
                 .show();
+        user.saveAlbumData(album);
+        adapter.notifyDataSetChanged();
     }
 
     protected void addLocationTag(Picture picture){
@@ -180,6 +185,8 @@ public class AlbumView extends AppCompatActivity {
                 })
                 .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel())
                 .show();
+        user.saveAlbumData(album);
+        adapter.notifyDataSetChanged();
     }
 
     protected void removeTag(Picture picture){
@@ -206,6 +213,8 @@ public class AlbumView extends AppCompatActivity {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+        user.saveAlbumData(album);
+        adapter.notifyDataSetChanged();
     }
 
     /**
