@@ -14,6 +14,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import android.content.Context;
+import android.util.Log;
 
 /**
  * User class that functions mostly as a wrapper class for several albums.
@@ -141,6 +142,10 @@ public class User implements Serializable {
         }
         if(target == albums.size()){
             return;
+        }
+        String tags="\n";
+        for (Picture pic: data.getPictures()){
+            tags+=pic.printTags()+"\n";
         }
         albums.set(target, data);
         save();

@@ -12,18 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidPhotos10">
         <activity
-            android:name=".Slideshow"
-            android:parentActivityName=".AlbumView">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.androidphotos10.AlbumView" />
+            android:name=".Slideshow">
         </activity>
         <activity
-            android:name=".AlbumView"
-            android:parentActivityName=".Photos">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.androidphotos10.Photos" />
+            android:name=".AlbumView">
         </activity>
         <activity android:name=".Photos">
             <intent-filter>

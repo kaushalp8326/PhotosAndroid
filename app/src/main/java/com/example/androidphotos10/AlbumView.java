@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -81,8 +82,23 @@ public class AlbumView extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        user.saveAlbumData(album);
-        adapter.notifyDataSetChanged();
+        //bottom back button
+        /*
+        Log.v("Here", "Back pressed");
+        String albumNames="";
+        for(int i=0; i<user.getAlbums().size(); i++){
+            albumNames+=i+": "+user.getAlbums().get(i).getName()+", ";
+        }
+        String tags="\n";
+        for (int k=0; k<user.getAlbums().size(); k++){
+            Album a = user.getAlbums().get(k);
+            for (Picture pic: a.getPictures()){
+                tags+=pic.printTags()+"\n";
+            }
+        }
+        Log.v("Here", albumNames);
+        Log.v("Here", tags);
+         */
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         bundle.putSerializable(Photos.USER, user);
@@ -101,6 +117,7 @@ public class AlbumView extends AppCompatActivity {
     }
 
     protected void photoClicked(int index){
+        Log.v("Here", "pic pressed");
         Picture picture = album.getPictures().get(index);
         ImageView image = new ImageView(this);
         image.setImageURI(picture.getUri());

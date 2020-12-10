@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -76,6 +77,7 @@ public class Photos extends AppCompatActivity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        //bottom back button
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == ALBUM_DATA) {
             Album updated = (Album)data.getExtras().getSerializable(ALBUM);
