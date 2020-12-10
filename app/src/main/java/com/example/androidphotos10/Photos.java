@@ -36,6 +36,10 @@ public class Photos extends AppCompatActivity {
     private static final int DELETE = 2;
     private static final int OPEN_SEARCH_RESULTS = 10;
 
+    private final int SINGLE_TAG = 0;
+    private final int AND_TAG = 1;
+    private final int OR_TAG = 2;
+
     // Activity return data
     public static final int ALBUM_DATA = 0;
 
@@ -221,8 +225,30 @@ public class Photos extends AppCompatActivity {
     /**
      * Find photos by tags.
      */
-    protected void findPhotos() {
-        // TODO
+    protected void findPhotos(){
+        new AlertDialog.Builder(Photos.this)
+                .setTitle("Search By Tag")
+                //.setMessage("Select a search method:")
+                .setItems(R.array.search_options_array, (dlg, i) -> {
+                    switch (i){
+                        case SINGLE_TAG:
+                            findPhotosBySingleTag();
+                            break;
+
+                        case AND_TAG:
+                            findPhotosByTwoTags(AND_TAG);
+                            break;
+
+                        case OR_TAG:
+                            findPhotosByTwoTags(OR_TAG);
+                            break;
+                    }
+                })
+                .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel())
+                .show();
+    }
+
+    protected void findPhotosBySingleTag() {
         HashSet<Picture> searchPictures = new HashSet<Picture>();
         ArrayList<Picture> allPictures=new ArrayList<Picture>();
         for (int i=0; i<user.getAlbums().size(); i++){
@@ -251,6 +277,78 @@ public class Photos extends AppCompatActivity {
                         }
                         Album searchResults = new Album("Search Results", searchPictures);
                         openAlbum(searchResults, OPEN_SEARCH_RESULTS);
+                    }
+                })
+                .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel())
+                .show();
+    }
+
+    protected void findPhotosByTwoTags(int operation){
+        HashSet<Picture> searchPictures = new HashSet<Picture>();
+        ArrayList<Picture> allPictures=new ArrayList<Picture>();
+        for (int i=0; i<user.getAlbums().size(); i++){
+            Album album = user.getAlbums().get(i);
+            allPictures.addAll(album.getPictures());
+        }
+
+        final String[] searchParam1 = {""};
+        final String[] searchParam2 = {""};
+        final EditText tagInput1 = new EditText(Photos.this);
+        final EditText tagInput2 = new EditText(Photos.this);
+        new AlertDialog.Builder(Photos.this)
+                .setTitle("Search By Tag")
+                .setMessage("Enter the first tag to search by:")
+                .setView(tagInput1)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        searchParam1[0] =tagInput1.getText().toString();
+                        new AlertDialog.Builder(Photos.this)
+                                .setTitle("Search By Tag")
+                                .setMessage("Enter the second tag to search by:")
+                                .setView(tagInput2)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        searchParam2[0] =tagInput2.getText().toString();
+                                        if(operation == AND_TAG){
+                                            for(Picture pic: allPictures){
+                                                String[] tags = pic.getTagArray();
+                                                for(int q=0; q<tags.length; q++){
+                                                    String s=tags[q];
+                                                    String value=s.substring(s.indexOf("\n")+1);
+                                                    if(value.toLowerCase().contains(searchParam1[0].toLowerCase())){
+                                                        for(int w=0; w<tags.length; w++){
+                                                            String s2=tags[w];
+                                                            String value2=s2.substring(s2.indexOf("\n")+1);
+                                                            if(value2.toLowerCase().contains(searchParam2[0].toLowerCase())){
+                                                                searchPictures.add(pic);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            Album searchResults = new Album("Search Results", searchPictures);
+                                            openAlbum(searchResults, OPEN_SEARCH_RESULTS);
+                                        }else{
+                                            //OR operation
+                                            for(Picture pic: allPictures){
+                                                String[] tags = pic.getTagArray();
+                                                for(int t=0; t<tags.length; t++){
+                                                    String s=tags[t];
+                                                    String value=s.substring(s.indexOf("\n")+1);
+                                                    if(value.toLowerCase().contains(searchParam1[0].toLowerCase()) || value.toLowerCase().contains(searchParam2[0].toLowerCase())){
+                                                        searchPictures.add(pic);
+                                                    }
+                                                }
+                                            }
+                                            Album searchResults = new Album("Search Results", searchPictures);
+                                            openAlbum(searchResults, OPEN_SEARCH_RESULTS);
+                                        }
+                                    }
+                                })
+                                .setNegativeButton("Cancel", (dlg, j) -> dlg.cancel())
+                                .show();
                     }
                 })
                 .setNegativeButton("Cancel", (dlg, i) -> dlg.cancel())

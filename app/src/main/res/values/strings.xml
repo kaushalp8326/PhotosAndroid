@@ -23,4 +23,9 @@
         <item>Person</item>
         <item>Location</item>
     </string-array>
+    <string-array name="search_options_array">
+        <item>Single Tag</item>
+        <item>Tag1 AND Tag2</item>
+        <item>Tag1 OR Tag2</item>
+    </string-array>
 </resources>
